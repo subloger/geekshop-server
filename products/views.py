@@ -5,8 +5,8 @@ from django.shortcuts import render
 from products.models import ProductCategory, Product
 
 
-with open('products/fixtures/products.json', 'r', encoding='utf-8') as f:
-    prod = json.load(f)
+# with open('products/fixtures/products.json', 'r', encoding='utf-8') as f:
+#     prod = json.load(f)
 # Create your views here.
 
 
