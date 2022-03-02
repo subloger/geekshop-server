@@ -32,7 +32,7 @@ def registration(request):
             messages.success(request, 'Поздравляем! Регистрация прошла успешно.')
             return HttpResponseRedirect(reverse('users:login'))
     else:
-        form = UserRegistrationForm
+        form = UserRegistrationForm()
     context = {'title': 'GeekShop - Регистрация', 'form': form}
     return render(request, 'users/registration.html', context)
 
