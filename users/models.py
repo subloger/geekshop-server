@@ -18,7 +18,10 @@ class User(AbstractUser):
         self.save()
 
     def is_activation_key_expired(self):
-        if now() <= self.activation_key_expires:
-            return False
-        else:
-            return True
+        try:
+            if now() <= self.activation_key_expires:
+                return False
+            else:
+                return True
+        except Exception as err:
+            print(err)
