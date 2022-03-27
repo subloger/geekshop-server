@@ -67,6 +67,7 @@ def verify(request, email, activate_key):
         print(err)
         return HttpResponseRedirect(reverse('products:index'))
 
+
 @transaction.atomic
 def profile(request):
     if request.method == 'POST':
@@ -90,26 +91,3 @@ def profile(request):
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse('index'))
-
-
-# @transaction.atomic
-# def edit(request):
-#     title = 'Peдактирование'
-#     if request.method == 'POST':
-#         edit_form = UserProfileForm(request.POST, request.FILES,
-#                                     instance=request.user)
-#         profile_form = ShopUserEdit(request.POST,
-#                                     instance=request.user.shopuser)
-#         if edit_form.is_valid() and profile_form.is_valid():
-#             edit_form.save()
-#             return HttpResponseRedirect(reverse('auth:profile'))
-#     else:
-#         edit_form = UserProfileForm(instance=request.user)
-#         profile_form = ShopUserEdit(instance=request.user.shopuser)
-#
-#     content = {
-#         'title': title,
-#         'edit_form': edit_form,
-#         'profile_form': profile_form
-#     }
-#     return render(request, 'users/profile.html', content)
