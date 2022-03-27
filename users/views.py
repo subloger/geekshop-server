@@ -4,8 +4,10 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth
 from django.urls import reverse
 from django.contrib import messages
+from django.db import transaction
 
 from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
+from users.forms import ShopUserEdit
 from baskets.models import Basket, User
 # Create your views here.
 
@@ -63,20 +65,23 @@ def verify(request, email, activate_key):
             return render(request, 'users/verification.html')
     except Exception as err:
         print(err)
-        #return HttpResponseRedirect(reverse('products:index'))
+        return HttpResponseRedirect(reverse('products:index'))
 
-
+@transaction.atomic
 def profile(request):
     if request.method == 'POST':
         form = UserProfileForm(instance=request.user, files=request.FILES, data=request.POST)
-        if form.is_valid():
+        edit_form = ShopUserEdit(instance=request.user.shopuser, data=request.POST)
+        if form.is_valid() and edit_form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('users:profile'))
     else:
         form = UserProfileForm(instance=request.user)
+        edit_form = ShopUserEdit(instance=request.user.shopuser)
     context = {
         'title': 'GeekShop - Профиль',
         'form': form,
+        'edit_form': edit_form,
         'baskets': Basket.objects.filter(user=request.user),
     }
     return render(request, 'users/profile.html', context)
@@ -85,3 +90,26 @@ def profile(request):
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse('index'))
+
+
+# @transaction.atomic
+# def edit(request):
+#     title = 'Peдактирование'
+#     if request.method == 'POST':
+#         edit_form = UserProfileForm(request.POST, request.FILES,
+#                                     instance=request.user)
+#         profile_form = ShopUserEdit(request.POST,
+#                                     instance=request.user.shopuser)
+#         if edit_form.is_valid() and profile_form.is_valid():
+#             edit_form.save()
+#             return HttpResponseRedirect(reverse('auth:profile'))
+#     else:
+#         edit_form = UserProfileForm(instance=request.user)
+#         profile_form = ShopUserEdit(instance=request.user.shopuser)
+#
+#     content = {
+#         'title': title,
+#         'edit_form': edit_form,
+#         'profile_form': profile_form
+#     }
+#     return render(request, 'users/profile.html', content)
