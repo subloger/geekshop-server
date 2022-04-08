@@ -1,0 +1,14 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: 
+ =?utf-8?b?0JTQu9GPINCw0LrRgtC40LLQsNGG0LjQuCDQv9C+0LvRjNC30L7QstCw0YLQtdC7?=
+ =?utf-8?b?0Y8gYW5keXIg0L/RgNC+0LnQtNC40YLQtSDQv9C+INGB0YHRi9C70LrQtQ==?=
+From: django@geekshop.local
+To: andy@mail.ru
+Date: Wed, 23 Mar 2022 16:12:55 -0000
+Message-ID: <164805197544.94025.4831762565365748786@Sniper>
+
+Для подтверждения учетной записи andyr на портале
+http://localhost:8000 перейдите по ссылке http://localhost:8000/users/verify/andy@mail.ru/4e4cec90d3555f37b315ebe25085113fe13f6799/
+-------------------------------------------------------------------------------
