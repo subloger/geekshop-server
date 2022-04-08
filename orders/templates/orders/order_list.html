@@ -20,6 +20,7 @@
         </thead>
         <tbody>
         {% for item in object_list %}
+            {{ item.is_active }}
             {% if item.is_active %}
                 <tr>
                     <td class="td1 orders_list">{{ item.pk }}</td>
@@ -56,7 +57,7 @@
         </a>
     </button>
     <button class="btn btn-default btn-round">
-        <a href="{% url 'orders:order_create' %}">
+        <a href="{% url 'products:index'  %}">
             новый
         </a>
     </button>

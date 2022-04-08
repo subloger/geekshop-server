@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 
 from users.models import User
 from products.models import Product
@@ -25,3 +25,24 @@ class Basket(models.Model):
     def total_sum(self):
         baskets = Basket.objects.filter(user=self.user)
         return sum(basket.sum() for basket in baskets)
+
+    @staticmethod
+    def get_item(pk):
+        return Basket.objects.filter(id=pk).first()
+
+    # переопределение метода сохранения
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            if self.pk:
+                self.product.quantity -= self.quantity - self.__class__.get_item(self.pk).quantity
+            else:
+                self.product.quantity -= self.quantity
+            self.product.save()
+            super(Basket, self).save(*args, **kwargs)
+
+    # переопределение метода удаление
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        self.product.quantity += self.quantity
+        self.product.save()
+        super(Basket, self).delete(*args, **kwargs)
