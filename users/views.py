@@ -4,8 +4,10 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth
 from django.urls import reverse
 from django.contrib import messages
+from django.db import transaction
 
 from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
+from users.forms import ShopUserEdit
 from baskets.models import Basket, User
 # Create your views here.
 
@@ -18,7 +20,7 @@ def login(request):
             password = request.POST['password']
             user = auth.authenticate(username=username, password=password)
             if user and user.is_active:
-                auth.login(request, user)
+                auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 return HttpResponseRedirect(reverse('index'))
     else:
         form = UserLoginForm()
@@ -57,26 +59,30 @@ def verify(request, email, activate_key):
         if user.activation_key == activate_key and not user.is_activation_key_expired():
             user.is_active = True
             user.save(update_fields=['activation_key', 'activation_key_expires', 'is_active'])
-            auth.login(request, user)
+            auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return render(request, 'users/verification.html')
         else:
             return render(request, 'users/verification.html')
     except Exception as err:
         print(err)
-        #return HttpResponseRedirect(reverse('products:index'))
+        return HttpResponseRedirect(reverse('products:index'))
 
 
+@transaction.atomic
 def profile(request):
     if request.method == 'POST':
         form = UserProfileForm(instance=request.user, files=request.FILES, data=request.POST)
-        if form.is_valid():
+        edit_form = ShopUserEdit(instance=request.user.shopuser, data=request.POST)
+        if form.is_valid() and edit_form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('users:profile'))
     else:
         form = UserProfileForm(instance=request.user)
+        edit_form = ShopUserEdit(instance=request.user.shopuser)
     context = {
         'title': 'GeekShop - Профиль',
         'form': form,
+        'edit_form': edit_form,
         'baskets': Basket.objects.filter(user=request.user),
     }
     return render(request, 'users/profile.html', context)
