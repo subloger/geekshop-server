@@ -17,14 +17,14 @@ def products(request, category_id=None, page=1):
 
     paginator = Paginator(products, 3)
     try:
-        products_papaginator = paginator.page(page)
+        products_paginator = paginator.page(page)
     except PageNotAnInteger:
-        products_papaginator = paginator.page(1)
+        products_paginator = paginator.page(1)
     except EmptyPage:
-        products_papaginator = paginator.page(paginator.num_pages)
+        products_paginator = paginator.page(paginator.num_pages)
     context = {
         'title': 'GeekShop - Каталог',
         'productcategory': ProductCategory.objects.all(),
-        'products': products_papaginator,
+        'products': products_paginator,
     }
     return render(request, 'products/products.html', context)

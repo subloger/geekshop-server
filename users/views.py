@@ -79,11 +79,14 @@ def profile(request):
     else:
         form = UserProfileForm(instance=request.user)
         edit_form = ShopUserEdit(instance=request.user.shopuser)
+
+    baskets = Basket.objects.filter(user=request.user)
+    baskets = baskets.select_related('product', 'user')
     context = {
         'title': 'GeekShop - Профиль',
         'form': form,
         'edit_form': edit_form,
-        'baskets': Basket.objects.filter(user=request.user),
+        'baskets': baskets,
     }
     return render(request, 'users/profile.html', context)
 
