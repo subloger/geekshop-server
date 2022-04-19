@@ -11,14 +11,14 @@ def index(request):
     return render(request, 'products/index.html', context=context)
 
 
-def get_products(category=None, category_id=None):
+def get_products(category=None):
     if settings.LOW_CACHE:
         key = 'products'
         if not category is None:
             key = f'products_{category}'
         products = cache.get(key)
         if products is None:
-            products = Product.objects.filter(category_id=category_id)
+            products = Product.objects.all()
         else:
             products = Product.objects.all()
             cache.set(key, products)
@@ -30,6 +30,11 @@ def products(request, category_id=None, page=1):
         products = get_products()  # Product.objects.filter(category_id=category_id)
     else:
         products = get_products()  # Product.objects.all()
+
+    for i in products:
+        new_price = i.price - (i.price * i.discount/100)
+        i.discount_price = new_price
+        i.save()
 
     paginator = Paginator(products, 3)
     try:
